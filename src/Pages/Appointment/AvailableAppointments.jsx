@@ -16,9 +16,9 @@ const AvailableAppointments = ({ date }) => {
     error,
     data: services,
   } = useQuery(["available", formattedDate], () =>
-    fetch(`http://localhost:5000/available?date=${formattedDate}`).then((res) =>
-      res.json()
-    )
+    fetch(
+      `https://still-badlands-93657.herokuapp.com/available?date=${formattedDate}`
+    ).then((res) => res.json())
   );
 
   if (isLoading) {
@@ -28,7 +28,7 @@ const AvailableAppointments = ({ date }) => {
   // const allServices = services;
 
   // useEffect(() => {
-  //   fetch(`http://localhost:5000/available?date=${formattedDate}`)
+  //   fetch(`https://still-badlands-93657.herokuapp.com/available?date=${formattedDate}`)
   //     .then((res) => res.json())
   //     .then((data) => {
   //       setServices(data);
