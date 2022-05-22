@@ -13,7 +13,9 @@ const AddDoctor = () => {
   } = useForm();
 
   const { data: services, isLoading } = useQuery("services", () =>
-    fetch("http://localhost:5000/service").then((res) => res.json())
+    fetch("https://still-badlands-93657.herokuapp.com/service").then((res) =>
+      res.json()
+    )
   );
 
   const imgStorageKey = "7ad91e050d4c25583250b841ac20a86e";
@@ -36,37 +38,37 @@ const AddDoctor = () => {
       method: "POST",
       body: formData,
     })
-    .then(res => res.json())
-    .then(result => {
-      if(result.success){
-        const img = result.data.url;
-        const doctor = {
-          name: data.name,
-          email: data.email,
-          specialty: data.specialty,
-          img: img
+      .then((res) => res.json())
+      .then((result) => {
+        if (result.success) {
+          const img = result.data.url;
+          const doctor = {
+            name: data.name,
+            email: data.email,
+            specialty: data.specialty,
+            img: img,
+          };
+          // send to your database
+          fetch("https://still-badlands-93657.herokuapp.com/doctor", {
+            method: "POST",
+            headers: {
+              "content-type": "application/json",
+              authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+            },
+            body: JSON.stringify(doctor),
+          })
+            .then((res) => res.json())
+            .then((inserted) => {
+              if (inserted.insertedId) {
+                toast.success("Doctor added successfully");
+                reset();
+              } else {
+                toast.error("Failed to add the doctor");
+              }
+            });
         }
-        // send to your database
-        fetch('http://localhost:5000/doctor', {
-                    method: 'POST',
-                    headers: {
-                        'content-type': 'application/json',
-                        authorization: `Bearer ${localStorage.getItem('accessToken')}`
-                    },
-                    body: JSON.stringify(doctor)
-                })
-                .then(res =>res.json())
-                .then(inserted => {
-                  if (inserted.insertedId) {
-                    toast.success("Doctor added successfully");
-                    reset();
-                  } else {
-                    toast.error("Failed to add the doctor");
-                  }
-                })
-      }
-      console.log("imgbb", result);
-    })
+        console.log("imgbb", result);
+      });
   };
 
   if (isLoading) {
